@@ -3,6 +3,7 @@ package com.transvision.ticketing.extra;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,8 @@ import android.os.Message;
 import com.transvision.ticketing.R;
 import com.transvision.ticketing.posting.FTPAPI;
 import java.io.File;
+import java.util.Objects;
+
 import static com.transvision.ticketing.extra.Constants.APK_FILE_DOWNLOADED;
 import static com.transvision.ticketing.extra.Constants.APK_VERSION;
 
@@ -20,6 +23,7 @@ public class Auto_Update_apk extends Activity {
     ProgressDialog progress;
     FTPAPI ftpapi;
     String update_version = "";
+    Context context;
 
     //****************************************handler**********************************************************************
     private Handler handler = new Handler(new Handler.Callback() {
@@ -44,12 +48,12 @@ public class Auto_Update_apk extends Activity {
 
         functionCalls = new FunctionsCall();
         getSetValues = new GetSetValues();
-        ftpapi = new FTPAPI();
+        ftpapi = new FTPAPI(context);
         progress = new ProgressDialog(this);
 
         Intent intent = getIntent();
         Bundle bnd = intent.getExtras();
-        update_version = bnd.getString(APK_VERSION);
+        update_version = Objects.requireNonNull(bnd).getString(APK_VERSION);
 
         new Handler().postDelayed(new Runnable() {
             @Override

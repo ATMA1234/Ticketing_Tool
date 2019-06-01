@@ -42,8 +42,10 @@ import com.transvision.ticketing.posting.SendingData;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.transvision.ticketing.extra.Constants.GETSET;
+import static com.transvision.ticketing.extra.Constants.UPDATE_TICKET_ERROR;
 import static com.transvision.ticketing.extra.Constants.UPDATE_TICKET_FAILURE;
 import static com.transvision.ticketing.extra.Constants.UPDATE_TICKET_SUCCESS;
 import static com.transvision.ticketing.extra.FunctionsCall.getPath;
@@ -56,6 +58,7 @@ public class UpdateTicket extends AppCompatActivity {
     static ProgressDialog progressDialog;
     FunctionsCall functionsCall;
     String regex = "!'~@#$%^&*:;<>.,/}";
+    SendingData sendingData;
 
     private ImageView imageview;
     LinearLayout profile, hideshow;
@@ -71,9 +74,9 @@ public class UpdateTicket extends AppCompatActivity {
     String assign_status_role = "", assign_to_role = "", assign_priority = "", assign_severity = "", assign_hescom_tvd = "",
             filepathImage = "";
     String myTicketId = "", myTicketSubdivCode = "", myNarration = "", myPriority = "", mySeverity = "", myTicketStatus = "",
-            myGeneratedOn = "", myGeneratedBy = "", myMrCode = "", myTitle = "", myDescription = "", myAssignTo = "", myHescomTvd = "";
+            myGeneratedBy = "", myMrCode = "", myTitle = "", myDescription = "", myAssignTo = "", myHescomTvd = "";
     String ImageDecode = "", newTitleText = "", newDescText = "", newNarration = "", imageNameOnly = "";
-
+    String file_encode = "";
     //****************************************************************************************************************
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -87,6 +90,11 @@ public class UpdateTicket extends AppCompatActivity {
                 case UPDATE_TICKET_FAILURE:
                     progressDialog.dismiss();
                     functionsCall.showtoast(UpdateTicket.this, "Ticket update is failed.. Check once again...");
+                    break;
+
+                case UPDATE_TICKET_ERROR:
+                    progressDialog.dismiss();
+                    Toast.makeText(UpdateTicket.this, "Server problem...Please check!!", Toast.LENGTH_SHORT).show();
                     break;
 
 //                case FILE_UPLOADED:
@@ -122,6 +130,7 @@ public class UpdateTicket extends AppCompatActivity {
         });
         setSupportActionBar(toolbar);
         functionsCall = new FunctionsCall();
+        sendingData = new SendingData(this);
         initialize();
 //*******************************profile spinner*************************************************************
         profile.setOnClickListener(new View.OnClickListener() {
@@ -315,7 +324,7 @@ public class UpdateTicket extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TextView assign_role = view.findViewById(R.id.spinner_txt);
                 assign_priority = assign_role.getText().toString();
-                if (!assign_role.equals("--SELECT--")) {
+                if (!assign_priority.equals("--SELECT--")) {
                     main_role = assign_priority;
                 }
 
@@ -360,7 +369,7 @@ public class UpdateTicket extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TextView assign_role = view.findViewById(R.id.spinner_txt);
                 assign_severity = assign_role.getText().toString();
-                if (!assign_role.equals("--SELECT--")) {
+                if (!assign_severity.equals("--SELECT--")) {
                     main_role = assign_severity;
                 }
                 if (assign_severity.equalsIgnoreCase("S1-Critical")) {
@@ -412,7 +421,7 @@ public class UpdateTicket extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TextView assign_role = view.findViewById(R.id.spinner_txt);
                 assign_to_role = assign_role.getText().toString();
-                if (!assign_role.equals("--SELECT--")) {
+                if (!assign_to_role.equals("--SELECT--")) {
                     main_role = assign_to_role;
                 }
                 if (assign_to_role.equalsIgnoreCase("HESCOM")) {
@@ -466,7 +475,7 @@ public class UpdateTicket extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TextView assign_role = view.findViewById(R.id.spinner_txt);
                 assign_hescom_tvd = assign_role.getText().toString();
-                if (!assign_role.equals("--SELECT--")) {
+                if (!assign_hescom_tvd.equals("--SELECT--")) {
                     main_role = assign_hescom_tvd;
                 }
                 if (assign_hescom_tvd.equalsIgnoreCase("EEIT")) {
@@ -583,7 +592,7 @@ public class UpdateTicket extends AppCompatActivity {
             }
         });
 
-        //********************** Status Selection Click Listener *******************************************/
+        //************************************ Status Selection Click Listener *********************************************************
         status.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -672,7 +681,7 @@ public class UpdateTicket extends AppCompatActivity {
             }
         });
 
-        //********************Update Ticket***********************************************************************
+        //*************************************************Update Ticket***********************************************************************
         btn_upadte.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -687,16 +696,15 @@ public class UpdateTicket extends AppCompatActivity {
                                     tic_comment = et_comments.getText().toString();//4
                                     if (!TextUtils.isEmpty(tic_comment)) {
                                         functionsCall.showprogressdialog(getResources().getString(R.string.update), getResources().getString(R.string.update_message), progressDialog);
-                                        String file_encode = "";
                                         if (!TextUtils.isEmpty(filepathImage)) {
                                             File file = new File(filepathImage);
                                             imageNameOnly = file.getName();
                                             file_encode = functionsCall.encoded(filepathImage);
                                         }
-                                        new SendingData().new TicketUpdate(handler, getSetValues).
-                                                execute(myTicketId, newNarration, imageNameOnly, myGeneratedBy, myTicketSubdivCode,
-                                                        assign_status_role, assign_priority, assign_severity, newTitleText, newDescText,
-                                                        assign_to_role, assign_hescom_tvd, myMrCode, tic_comment, file_encode);
+                                        SendingData.TicketUpdate ticketUpdate = sendingData.new TicketUpdate(handler, getSetValues);
+                                        ticketUpdate.execute(myTicketId, newNarration, imageNameOnly, myGeneratedBy, myTicketSubdivCode,
+                                                assign_status_role, assign_priority, assign_severity, newTitleText, newDescText,
+                                                assign_to_role, assign_hescom_tvd, myMrCode, tic_comment, file_encode);
                                     } else
                                         Toast.makeText(UpdateTicket.this, "Enter Comment", Toast.LENGTH_SHORT).show();
                                 } else
@@ -715,6 +723,7 @@ public class UpdateTicket extends AppCompatActivity {
         return bundle.getString(value);
     }
 
+    //************************************************************************************************************************************
     private InputFilter filter = new InputFilter() {
 
         @Override
@@ -727,7 +736,7 @@ public class UpdateTicket extends AppCompatActivity {
         }
     };
 
-    //*************************************************Update Dialog****************************************************************
+    //*************************************************Update Dialog*******************************************************************************
     private void showdialog(int id) {
         switch (id) {
             case DLG_TICKET_UPDATE:
@@ -747,13 +756,12 @@ public class UpdateTicket extends AppCompatActivity {
         }
     }
 
-    //*************************************************send email**********************************************************
+    //*************************************************send email*************************************************************************
     public void email() {
         Intent email = new Intent(Intent.ACTION_SEND);
         email.putExtra(Intent.EXTRA_EMAIL, new String[]{"notification@hescomtrm.com"});
         email.putExtra(Intent.EXTRA_SUBJECT, "Ticket ID " + myTicketId + " is Updated successfully.");
-        email.putExtra(Intent.EXTRA_TEXT, "Dear user, \n\n Title : " + myTitle + "\n" + "Comment : " + tic_comment
-                + "\n" + "File : " + imageNameOnly);
+        email.putExtra(Intent.EXTRA_TEXT, "Dear user, \n\n Title : " + myTitle + "\n" + "Comment : " + tic_comment + "\n" + "File : " + imageNameOnly);
         email.setType("plain/text");
         try {
             startActivity(Intent.createChooser(email, "Choose an Email client :"));
@@ -763,11 +771,11 @@ public class UpdateTicket extends AppCompatActivity {
         }
     }
 
-    // *************Select image from camera or gallery**********************************************************
+    // ****************************Select image from camera or gallery**********************************************************
     private void showPictureDialog() {
         android.app.AlertDialog.Builder pictureDialog = new android.app.AlertDialog.Builder(this);
         pictureDialog.setTitle("Select Option");
-        String[] pictureDialogItems = {"Gallery", "Camera", "File Manager"};
+        String[] pictureDialogItems = {"Gallery", "Camera", "File Manager", "Cancel"};
         pictureDialog.setItems(pictureDialogItems, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -780,6 +788,9 @@ public class UpdateTicket extends AppCompatActivity {
                         break;
                     case 2:
                         takeFromFileManager();
+                        break;
+                    case 3:
+                        cancel_file();
                         break;
                 }
             }
@@ -817,9 +828,8 @@ public class UpdateTicket extends AppCompatActivity {
                 if (data != null) {
                     Uri URI = data.getData();
                     String[] FILE = {MediaStore.Images.Media.DATA};
-                    Cursor cursor = getApplicationContext().getContentResolver().query(URI, FILE,
-                            null, null, null);
-                    cursor.moveToFirst();
+                    Cursor cursor = getApplicationContext().getContentResolver().query(Objects.requireNonNull(URI), FILE, null, null, null);
+                    Objects.requireNonNull(cursor).moveToFirst();
                     int columnIndex = cursor.getColumnIndex(FILE[0]);
                     ImageDecode = cursor.getString(columnIndex);
                     cursor.close();
@@ -829,19 +839,20 @@ public class UpdateTicket extends AppCompatActivity {
 
                 }
             } else if (requestCode == CAMERA && resultCode == RESULT_OK) {
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                Bitmap photo = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
                 imageview.setImageBitmap(photo);
                 Uri tempUri = getImageUri(getApplicationContext(), photo);
                 filepathImage = (getRealPathFromURI(tempUri));
                 Toast.makeText(getApplicationContext(), "Uplaoded File is" + filepathImage, Toast.LENGTH_SHORT).show();
                 buttonpick.setText(filepathImage);
+
             } else if (requestCode == FILE_MANAGER) {
                 if (data != null) {
                     Uri URI = data.getData();
                     String[] FILE = {MediaStore.Images.Media.DATA};
                     ContentResolver cr = getApplicationContext().getContentResolver();
-                    Cursor cursor = cr.query(URI, FILE, null, null, null);
-                    cursor.moveToFirst();
+                    Cursor cursor = cr.query(Objects.requireNonNull(URI), FILE, null, null, null);
+                    Objects.requireNonNull(cursor).moveToFirst();
                     int columnIndex = cursor.getColumnIndex(FILE[0]);
                     ImageDecode = cursor.getString(columnIndex);
                     cursor.close();
@@ -856,10 +867,15 @@ public class UpdateTicket extends AppCompatActivity {
         }
     }
 
+    public void cancel_file() {
+        buttonpick.setText("");
+
+    }
+
     //******************************get ImageUri & compress****************************************************************************
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        inImage.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title",
                 null);
         return Uri.parse(path);
@@ -868,7 +884,7 @@ public class UpdateTicket extends AppCompatActivity {
     public String getRealPathFromURI(Uri uri) {
         @SuppressLint("Recycle") Cursor cursor = getApplicationContext().getContentResolver().query(uri,
                 null, null, null, null);
-        cursor.moveToFirst();
+        Objects.requireNonNull(cursor).moveToFirst();
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         return cursor.getString(idx);
     }

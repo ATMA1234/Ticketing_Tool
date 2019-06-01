@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -51,8 +52,7 @@ import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 import static com.transvision.ticketing.MainActivity.Steps.FORM0;
-import static com.transvision.ticketing.extra.Constants.FILE_UPLOADED;
-import static com.transvision.ticketing.extra.Constants.FILE_UPLOADED_ERROR;
+import static com.transvision.ticketing.extra.Constants.GENERATE_TICKET_ERROR;
 import static com.transvision.ticketing.extra.Constants.GENERATE_TICKET_FAILURE;
 import static com.transvision.ticketing.extra.Constants.GENERATE_TICKET_SUCCESS;
 import static com.transvision.ticketing.extra.FunctionsCall.getPath;
@@ -80,12 +80,13 @@ public class AdminTicketing extends Fragment {
     String main_role = "";
     Intent intent;
     String Ticket_Id = "";
-    String ticGenOn = "", ticTitle = "", ticdesc = "";
+    String ticTitle = "", ticdesc = "";
     String titleText = "", csd_hescom = "", descText = "", narration = "", imageNameOnly = "";
-    String assign_status_role = "", assign_to_role = "", assign_priority = "", assign_severity = "", assign_hescom_tvd = "",
-            filepathImage = "", mr_code = "", generated_by;
-    String ImageDecode = "";
+    String assign_status_role = "", assign_to_role = "", assign_priority = "", assign_severity = "", assign_hescom_tvd = "", ImageDecode = "",
+            mr_code = "", generated_by;
     ProgressDialog progressDialog;
+    SendingData sendingData;
+    String file_encode = "", filepathImage = "";
     //*******************************************************************************************************
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -94,8 +95,7 @@ public class AdminTicketing extends Fragment {
 //                case FILE_UPLOADED:
 //                    SendingData.GenerateTicket generateTicket = new SendingData().new GenerateTicket(handler, getSet);
 //                    generateTicket.execute(narration, imageNameOnly, ticGenOn, generated_by,
-//                            ((MainActivity) Objects.requireNonNull(getActivity())).getSubdiv_code(), assign_status_role,
-//                            assign_priority, titleText,
+//                            ((MainActivity) Objects.requireNonNull(getActivity())).getSubdiv_code(), assign_status_role,assign_priority, titleText,
 //                            descText, assign_severity, assign_to_role, assign_hescom_tvd, mr_code, csd_hescom);
 //                    break;
 //
@@ -112,6 +112,11 @@ public class AdminTicketing extends Fragment {
                 case GENERATE_TICKET_FAILURE:
                     progressDialog.dismiss();
                     Toast.makeText(getActivity(), "Ticket not generated....", Toast.LENGTH_SHORT).show();
+                    break;
+
+                case GENERATE_TICKET_ERROR:
+                    progressDialog.dismiss();
+                    Toast.makeText(getActivity(), "Server problem...Please check!!", Toast.LENGTH_SHORT).show();
                     break;
             }
             return false;
@@ -198,11 +203,11 @@ public class AdminTicketing extends Fragment {
         imageview = view.findViewById(R.id.image);
         btn_submit = view.findViewById(R.id.btn_submit);
         et_title = view.findViewById(R.id.et_title);
-        et_title.setFilters(new InputFilter[] { filter });
+        et_title.setFilters(new InputFilter[]{filter});
         et_description = view.findViewById(R.id.et_description);
-        et_description.setFilters(new InputFilter[] { filter });
+        et_description.setFilters(new InputFilter[]{filter});
         et_narration = view.findViewById(R.id.et_narration);
-        et_narration.setFilters(new InputFilter[] { filter });
+        et_narration.setFilters(new InputFilter[]{filter});
         tvTicketId = view.findViewById(R.id.tv_ticket_id);
         tvMobileNo = view.findViewById(R.id.tv_mobile);
         tvZoneName = view.findViewById(R.id.tv_zone);
@@ -249,7 +254,8 @@ public class AdminTicketing extends Fragment {
         tvd_adapter = new RoleAdapter(tvd_list, getActivity());
         department.setAdapter(tvd_adapter);
         functionsCall = new FunctionsCall();
-        ftpapi = new FTPAPI();
+        ftpapi = new FTPAPI(Objects.requireNonNull(getContext()));
+        sendingData = new SendingData(getContext());
 
         //*********************************Status value insertion in server ***********************************/
         status.setSelection(0);
@@ -258,9 +264,9 @@ public class AdminTicketing extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TextView assign_role = view.findViewById(R.id.spinner_txt);
                 assign_status_role = assign_role.getText().toString();
-//                if (!assign_role.equals("--SELECT--")) {
-//                    main_role = assign_status_role;
-//                }
+                if (!assign_status_role.equals("--SELECT--")) {
+                    main_role = assign_status_role;
+                }
                 if (assign_status_role.equalsIgnoreCase("NEW")) {
                     status_list.clear();
 
@@ -357,7 +363,7 @@ public class AdminTicketing extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TextView assign_role = view.findViewById(R.id.spinner_txt);
                 assign_priority = assign_role.getText().toString();
-                if (!assign_role.equals("--SELECT--")) {
+                if (!assign_priority.equals("--SELECT--")) {
                     main_role = assign_priority;
                 }
                 if (assign_priority.equalsIgnoreCase("P1-High")) {
@@ -404,7 +410,7 @@ public class AdminTicketing extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TextView assign_role = view.findViewById(R.id.spinner_txt);
                 assign_severity = assign_role.getText().toString();
-                if (!assign_role.equals("--SELECT--")) {
+                if (!assign_severity.equals("--SELECT--")) {
                     main_role = assign_severity;
                 }
                 if (assign_severity.equalsIgnoreCase("S1-Critical")) {
@@ -460,7 +466,7 @@ public class AdminTicketing extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TextView assign_role = view.findViewById(R.id.spinner_txt);
                 assign_hescom_tvd = assign_role.getText().toString();
-                if (!assign_role.equals("--SELECT--")) {
+                if (!assign_hescom_tvd.equals("--SELECT--")) {
                     main_role = assign_hescom_tvd;
                 }
                 if (assign_hescom_tvd.equalsIgnoreCase("EEIT")) {
@@ -528,7 +534,7 @@ public class AdminTicketing extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TextView assign_role = view.findViewById(R.id.spinner_txt);
                 assign_to_role = assign_role.getText().toString();
-                if (!assign_role.equals("--SELECT--")) {
+                if (!assign_to_role.equals("--SELECT--")) {
                     main_role = assign_to_role;
                 }
                 if (assign_to_role.equalsIgnoreCase("HESCOM")) {
@@ -548,7 +554,7 @@ public class AdminTicketing extends Fragment {
                         tvd_list.add(getSetValues);
                         tvd_adapter.notifyDataSetChanged();
                     }
-                    Toast.makeText(getActivity(), "TVD Selected", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), "TVD Selected", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -569,26 +575,24 @@ public class AdminTicketing extends Fragment {
 
                                     titleText = et_title.getText().toString();//1
                                     if (!TextUtils.isEmpty(titleText)) {
-                                            descText = et_description.getText().toString();//2
-                                            if (!TextUtils.isEmpty(descText)) {
-                                                    narration = et_narration.getText().toString();//3
-                                                    if (!TextUtils.isEmpty(narration)) {
-                                                            csd_hescom = generated_by + assign_hescom_tvd;
-                                                            functionsCall.showprogressdialog(getResources().getString(R.string.ticketing),
-                                                                    getResources().getString(R.string.ticketing_message), progressDialog);
-                                                            String file_encode = "";
-                                                            if (!TextUtils.isEmpty(filepathImage)) {
-                                                                File file = new File(filepathImage);
-                                                                imageNameOnly = file.getName();
-                                                                file_encode = functionsCall.encoded(filepathImage);
-                                                            }
-                                                            SendingData.GenerateTicket generateTicket = new SendingData().new GenerateTicket(handler, getSetValues);
-                                                            generateTicket.execute(narration, imageNameOnly, generated_by,
-                                                                    ((MainActivity) getActivity()).getSubdiv_code(), assign_status_role,
-                                                                    assign_priority, titleText, descText, assign_severity,
-                                                                    assign_to_role, assign_hescom_tvd, mr_code, csd_hescom, file_encode);
-                                                    } else et_narration.setError("Enter Narration");
-                                            } else et_description.setError("Enter Description");
+                                        descText = et_description.getText().toString();//2
+                                        if (!TextUtils.isEmpty(descText)) {
+                                            narration = et_narration.getText().toString();//3
+                                            if (!TextUtils.isEmpty(narration)) {
+                                                csd_hescom = generated_by + assign_hescom_tvd;
+                                                functionsCall.showprogressdialog(getResources().getString(R.string.ticketing),
+                                                        getResources().getString(R.string.ticketing_message), progressDialog);
+                                                if (!TextUtils.isEmpty(filepathImage)) {
+                                                    File file = new File(filepathImage);
+                                                    imageNameOnly = file.getName();
+                                                    file_encode = functionsCall.encoded(ImageDecode);
+                                                }
+                                                SendingData.GenerateTicket generateTicket = sendingData.new GenerateTicket(handler, getSetValues);
+                                                generateTicket.execute(narration, imageNameOnly, generated_by,
+                                                        ((MainActivity) getActivity()).getSubdiv_code(), assign_status_role, assign_priority, titleText,
+                                                        descText, assign_severity, assign_to_role, assign_hescom_tvd, mr_code, csd_hescom, file_encode);
+                                            } else et_narration.setError("Enter Narration");
+                                        } else et_description.setError("Enter Description");
                                     } else et_title.setError("Enter Title");
                                 } else
                                     functionsCall.showtoast(getActivity(), "Please Select Status");
@@ -600,6 +604,7 @@ public class AdminTicketing extends Fragment {
             }
         });
     }
+
     //*************************************************Ticket Dialog****************************************************************
     private void showdialog(int id) {
         Ticket_Id = getSetValues.getGenerated_tic_id();
@@ -621,8 +626,9 @@ public class AdminTicketing extends Fragment {
                 break;
         }
     }
-    private InputFilter filter = new InputFilter() {
 
+    //*********************************************************************************************************************
+    private InputFilter filter = new InputFilter() {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
 
@@ -632,6 +638,7 @@ public class AdminTicketing extends Fragment {
             return null;
         }
     };
+
     //*************************************************send email**********************************************************
     public void email() {
         Intent email = new Intent(Intent.ACTION_SEND);
@@ -650,7 +657,7 @@ public class AdminTicketing extends Fragment {
     private void showPictureDialog() {
         android.app.AlertDialog.Builder pictureDialog = new android.app.AlertDialog.Builder(getActivity());
         pictureDialog.setTitle("Select Option");
-        String[] pictureDialogItems = {"Gallery", "Camera", "File Manager"};
+        String[] pictureDialogItems = {"Gallery", "Camera", "File Manager", "Cancel"};
         pictureDialog.setItems(pictureDialogItems, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -663,6 +670,9 @@ public class AdminTicketing extends Fragment {
                         break;
                     case 2:
                         takeFromFileManager();
+                        break;
+                    case 3:
+                        cancel_file();
                         break;
                 }
             }
@@ -681,8 +691,8 @@ public class AdminTicketing extends Fragment {
     }
 
     private void takeFromFileManager() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
         startActivityForResult(intent, FILE_MANAGER);
     }
@@ -696,45 +706,45 @@ public class AdminTicketing extends Fragment {
             return;
         }
         try {
-            if (requestCode == GALLERY) {
-                if (data != null) {
-                    Uri URI = data.getData();
-                    String[] FILE = {MediaStore.Images.Media.DATA};
-                    assert URI != null;
-                    Cursor cursor = Objects.requireNonNull(getContext()).getContentResolver().query(URI, FILE,
-                            null, null, null);
-                    assert cursor != null;
-                    cursor.moveToFirst();
-                    int columnIndex = cursor.getColumnIndex(FILE[0]);
-                    ImageDecode = cursor.getString(columnIndex);
-                    cursor.close();
-                    filepathImage = getPath(getContext(), URI);
-                    Toast.makeText(getContext(), "Uplaoded File is" + filepathImage, Toast.LENGTH_SHORT).show();
-                    buttonpick.setText(filepathImage);
+            if (requestCode == GALLERY && data != null && resultCode == RESULT_OK) {
+                Uri URI = data.getData();
+                String[] FILE = {MediaStore.Images.Media.DATA};
+                assert URI != null;
+                Cursor cursor = Objects.requireNonNull(getContext()).getContentResolver().query(URI, FILE, null, null, null);
+                assert cursor != null;
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(FILE[0]);
+                ImageDecode = cursor.getString(columnIndex);
+                cursor.close();
+                imageview.setImageBitmap(BitmapFactory.decodeFile(ImageDecode));
+                filepathImage = getPath(getContext(), URI);
+                Toast.makeText(getContext(), "Uplaoded File is" + filepathImage, Toast.LENGTH_SHORT).show();
+                buttonpick.setText(filepathImage);
 
-                }
-            } else if (requestCode == CAMERA && resultCode == RESULT_OK) {
+            } else if (requestCode == CAMERA && data != null && resultCode == RESULT_OK) {
                 Bitmap photo = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
                 imageview.setImageBitmap(photo);
                 Uri tempUri = getImageUri(getContext(), photo);
                 filepathImage = (getRealPathFromURI(tempUri));
                 Toast.makeText(getContext(), "Uplaoded File is" + filepathImage, Toast.LENGTH_SHORT).show();
                 buttonpick.setText(filepathImage);
-            } else if (requestCode == FILE_MANAGER) {
-                if (data != null) {
-                    Uri URI = data.getData();
-                    String[] FILE = {MediaStore.Images.Media.DATA};
-                    ContentResolver cr = Objects.requireNonNull(getContext()).getContentResolver();
-                    Cursor cursor = cr.query(URI, FILE, null, null, null);
-                    assert cursor != null;
-                    cursor.moveToFirst();
-                    int columnIndex = cursor.getColumnIndex(FILE[0]);
-                    ImageDecode = cursor.getString(columnIndex);
-                    cursor.close();
-                    filepathImage = getPath(getContext(), URI);
-                    Toast.makeText(getContext(), "Uplaoded File is" + filepathImage, Toast.LENGTH_SHORT).show();
-                    buttonpick.setText(filepathImage);
-                }
+
+            } else if (requestCode == FILE_MANAGER && data != null && resultCode == RESULT_OK) {
+                Uri URI = data.getData();
+                String[] FILE = {MediaStore.Images.Media.DATA};
+                ContentResolver cr = Objects.requireNonNull(getContext()).getContentResolver();
+                assert URI != null;
+                Cursor cursor = cr.query(URI, FILE, null, null, null);
+                assert cursor != null;
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(FILE[0]);
+                ImageDecode = cursor.getString(columnIndex);
+                cursor.close();
+                imageview.setImageBitmap(BitmapFactory.decodeFile(ImageDecode));
+                filepathImage = getPath(getContext(), URI);
+                Toast.makeText(getContext(), "Uplaoded File is" + filepathImage, Toast.LENGTH_SHORT).show();
+                buttonpick.setText(filepathImage);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -742,12 +752,16 @@ public class AdminTicketing extends Fragment {
         }
     }
 
+    public void cancel_file() {
+        buttonpick.setText("");
+
+    }
+
     //*************************************************************************************************************************
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title",
-                null);
+        inImage.compress(Bitmap.CompressFormat.JPEG, 50, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
 

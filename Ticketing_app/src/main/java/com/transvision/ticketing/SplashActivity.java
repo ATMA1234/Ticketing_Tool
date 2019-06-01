@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import android.widget.Toast;
+
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_PHONE_STATE;
@@ -26,8 +27,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         if (Build.VERSION.SDK_INT > 24) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -35,7 +35,7 @@ public class SplashActivity extends AppCompatActivity {
                 checkPermissionsMandAbove();
                 finish();
             }
-        }, 2000); // WAIT FOR 1 SECONDS
+        }, 2000); // WAIT FOR 2 SECONDS
     }
 
     @TargetApi(23)
@@ -43,15 +43,19 @@ public class SplashActivity extends AppCompatActivity {
         int currentapiVersion = Build.VERSION.SDK_INT;
         if (currentapiVersion >= 23) {
             if (checkPermission()) {
-                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                startActivity(intent);
+                movetoLogin();
             } else {
                 requestPermission();
             }
         } else {
-            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-            startActivity(intent);
+            movetoLogin();
         }
+    }
+
+    private void movetoLogin() {
+        Intent in = new Intent(SplashActivity.this, LoginActivity.class);
+        startActivity(in);
+        finish();
     }
 
     private void requestPermission() {
@@ -84,8 +88,7 @@ public class SplashActivity extends AppCompatActivity {
                     boolean ReadLocationPermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
                     boolean ReadLogsPermission = grantResults[3] == PackageManager.PERMISSION_GRANTED;
                     if (ReadPhoneStatePermission && ReadStoragePermission && ReadLocationPermission && ReadLogsPermission) {
-                        Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                        startActivity(intent);
+                        movetoLogin();
                     } else {
                         Toast.makeText(SplashActivity.this, "Required All Permissions to granted",
                                 Toast.LENGTH_SHORT).show();

@@ -16,6 +16,8 @@ import com.transvision.ticketing.R;
 import com.transvision.ticketing.SplashActivity;
 import com.transvision.ticketing.posting.SendingData;
 import java.util.ArrayList;
+import java.util.Objects;
+
 import static com.transvision.ticketing.extra.Constants.LOGIN_SUCCESS;
 
 public class Apk_Notification extends BroadcastReceiver {
@@ -24,7 +26,7 @@ public class Apk_Notification extends BroadcastReceiver {
     SendingData sendingData;
     String curr_version="";
     Context Notification_context;
-    private ArrayList<GetSetValues> arrayList;
+    ArrayList<GetSetValues> arrayList;
 
     //****************************************handler**********************************************************************
     private Handler handler = new Handler(new Handler.Callback() {
@@ -47,7 +49,7 @@ public class Apk_Notification extends BroadcastReceiver {
         Notification_context = context;
         functionsCall = new FunctionsCall();
         getSetValues = new GetSetValues();
-        sendingData = new SendingData();
+        sendingData = new SendingData(context);
 
         functionsCall.logStatus("Apk Notification Current Time: "+functionsCall.currentRecpttime());
 
@@ -89,6 +91,6 @@ public class Apk_Notification extends BroadcastReceiver {
         // Gets an instance of the NotificationManager service
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         //to post your notification to the notification bar with a id. If a notification with same id already exists, it will get replaced with updated information.
-        notificationManager.notify(0, builder.build());
+        Objects.requireNonNull(notificationManager).notify(0, builder.build());
     }
 }

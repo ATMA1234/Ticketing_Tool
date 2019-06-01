@@ -19,9 +19,11 @@ import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -75,6 +77,7 @@ public class FunctionsCall {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
         return sdf.format(new Date());
     }
+
     //***********************************************progress dialog***********************************************************
     public void showprogressdialog(String title, String message, ProgressDialog progressDialog) {
         progressDialog.setTitle(title);
@@ -83,6 +86,7 @@ public class FunctionsCall {
         progressDialog.setIndeterminate(true);
         progressDialog.show();
     }
+
     //****************************************update App*****************************************************************
     public void updateApp(Context context, File Apkfile) {
         Uri path;
@@ -96,10 +100,12 @@ public class FunctionsCall {
         objIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         context.startActivity(objIntent);
     }
+
     //**********************************************************************************************************
     public String normalisedVersion(String version) {
         return normalisedVersion(version, ".", 4);
     }
+
     private String normalisedVersion(String version, String sep, int maxWidth) {
         String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
         StringBuilder sb = new StringBuilder();
@@ -108,6 +114,7 @@ public class FunctionsCall {
         }
         return sb.toString();
     }
+
     //***********************************compare version************************************************************************
     public boolean compare(String v1, String v2) {
         String s1 = normalisedVersion(v1);
@@ -116,10 +123,11 @@ public class FunctionsCall {
         String cmpStr = cmp < 0 ? "<" : cmp > 0 ? ">" : "==";
         return cmpStr.equals("<");
     }
+
     //*********************************************************************************************************************
     //***************************************************************************************************************************
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static String getPath(final Context context, final Uri uri) {
+    public static String getPath(final Context context, final Uri uri) throws URISyntaxException {
         @SuppressLint("ObsoleteSdkInt") final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
         // DocumentProvider
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {

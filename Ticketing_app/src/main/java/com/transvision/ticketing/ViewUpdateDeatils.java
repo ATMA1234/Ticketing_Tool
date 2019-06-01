@@ -15,13 +15,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.transvision.ticketing.extra.FileOpen;
 import com.transvision.ticketing.extra.FunctionsCall;
 import com.transvision.ticketing.extra.GetSetValues;
 import com.transvision.ticketing.posting.FTPAPI;
 import com.transvision.ticketing.posting.SendingData;
+
 import java.io.File;
 import java.util.ArrayList;
+
 import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_ERROR;
 import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_FAILURE;
 import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_SUCCESS;
@@ -35,14 +38,14 @@ public class ViewUpdateDeatils extends AppCompatActivity {
     Button btn_edit;
     String ticket_no = "", ticket_narration = "", ticket_file = "", ticket_generated_by = "", ticket_generated_on = "",
             ticket_status = "", ticket_close = "", ticket_subdivision_code = "", ticket_mr_code = "", tic_comment = "",
-            ticket_priority = "", ticket_severity = "", ticket_assign_to = "", ticket_hescom_tvd = "", ticket_title = "",
-            ticket_description = "";
+            ticket_priority = "", ticket_severity = "", ticket_assign_to = "", ticket_hescom_tvd = "", ticket_title = "",ticket_description = "";
     Toolbar toolbar;
     GetSetValues getSetValues;
     ProgressDialog progressDialog;
     FunctionsCall functionsCall;
     SendingData sendingData;
     ArrayList<GetSetValues> arrayList;
+    FTPAPI ftpapi;
 
     //****************************************handler**********************************************************************
     private Handler handler = new Handler(new Handler.Callback() {
@@ -55,13 +58,13 @@ public class ViewUpdateDeatils extends AppCompatActivity {
                     break;
 
                 case DOWNLOAD_FILE_FAILURE:
-                    new FTPAPI().new Download_file(ticket_file, handler).execute();
+                    FTPAPI.Download_file upload_file = ftpapi.new Download_file(ticket_file, handler);
+                    upload_file.execute();
                     break;
 
                 case DOWNLOAD_FILE_ERROR:
                     progressDialog.dismiss();
-                    functionsCall.showtoast(ViewUpdateDeatils.this,
-                            "File is not downloading please check it...");
+                    functionsCall.showtoast(ViewUpdateDeatils.this,"File is not downloading please check it...");
                     break;
             }
             return false;
@@ -76,9 +79,9 @@ public class ViewUpdateDeatils extends AppCompatActivity {
         setContentView(R.layout.activity_view_update_deatils);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        TextView font_toolbar_title =  toolbar.findViewById(R.id.toolbar_title);
+        TextView font_toolbar_title = toolbar.findViewById(R.id.toolbar_title);
         font_toolbar_title.setText("Ticketing Tool");
-        ImageView back_icon =  findViewById(R.id.toolbar_icon);
+        ImageView back_icon = findViewById(R.id.toolbar_icon);
         back_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,30 +91,31 @@ public class ViewUpdateDeatils extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 //*********************************Initialization*********************************************************************
-        tic_close_layout =  findViewById(R.id.tic_close_layout);
+        tic_close_layout = findViewById(R.id.tic_close_layout);
         lin_comment = findViewById(R.id.tic_cmnt);
-        tv_tic_no =  findViewById(R.id.tic_no);
-        tv_subdiv_code =  findViewById(R.id.tic_subdiv_code);
-        tv_tic_narr =  findViewById(R.id.tic_narr);
+        tv_tic_no = findViewById(R.id.tic_no);
+        tv_subdiv_code = findViewById(R.id.tic_subdiv_code);
+        tv_tic_narr = findViewById(R.id.tic_narr);
         tv_tic_file = findViewById(R.id.tic_file);
-        down_file =  findViewById(R.id.download); //download file
-        tv_tic_gen_by =  findViewById(R.id.tic_gen_by);
-        tv_tic_gen_on =  findViewById(R.id.tic_gen_on);
-        tv_tic_status =  findViewById(R.id.tic_status);
-        tv_tic_close =  findViewById(R.id.tic_close);//close date
-        tv_priority =  findViewById(R.id.tic_priority);
-        tv_severity =  findViewById(R.id.tic_severity);
-        tv_assign_to =  findViewById(R.id.tic_assign_to);
-        tv_hescom_tvd =  findViewById(R.id.tic_hescom_tvd);
-        tv_title =  findViewById(R.id.tic_title);
+        down_file = findViewById(R.id.download); //download file
+        tv_tic_gen_by = findViewById(R.id.tic_gen_by);
+        tv_tic_gen_on = findViewById(R.id.tic_gen_on);
+        tv_tic_status = findViewById(R.id.tic_status);
+        tv_tic_close = findViewById(R.id.tic_close);//close date
+        tv_priority = findViewById(R.id.tic_priority);
+        tv_severity = findViewById(R.id.tic_severity);
+        tv_assign_to = findViewById(R.id.tic_assign_to);
+        tv_hescom_tvd = findViewById(R.id.tic_hescom_tvd);
+        tv_title = findViewById(R.id.tic_title);
         tv_description = findViewById(R.id.tic_desc);
-        tv_comment =  findViewById(R.id.txt_tic_comm);//comment
-        btn_edit =  findViewById(R.id.btn_edit);
+        tv_comment = findViewById(R.id.txt_tic_comm);//comment
+        btn_edit = findViewById(R.id.btn_edit);
         getSetValues = new GetSetValues();
         progressDialog = new ProgressDialog(this);
         functionsCall = new FunctionsCall();
-        sendingData = new SendingData();
+        sendingData = new SendingData(this);
         arrayList = new ArrayList<>();
+        ftpapi = new FTPAPI(this);
 
 //********************Getting Data***********************************************************************
         Bundle extras = getIntent().getExtras();
@@ -148,19 +152,18 @@ public class ViewUpdateDeatils extends AppCompatActivity {
         tv_description.setText(ticket_description);
         tv_tic_narr.setText(ticket_narration);
 
-        if(!TextUtils.isEmpty(tic_comment)) {
+        if (!TextUtils.isEmpty(tic_comment)) {
             tv_comment.setText(tic_comment); //comment
-        }
-        else lin_comment.setVisibility(View.INVISIBLE);
+        } else lin_comment.setVisibility(View.INVISIBLE);
 
 //**************************************************download file********************************************************
         down_file.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(ticket_file)) {
-                    functionsCall.showprogressdialog("Downloading",
-                            "Downloading file please wait to download...", progressDialog);
-                    new FTPAPI().new Download_file(ticket_file, handler).execute();
+                    functionsCall.showprogressdialog("Downloading","Downloading file please wait to download...", progressDialog);
+                    FTPAPI.Download_file download_file = ftpapi.new Download_file(ticket_file, handler);
+                    download_file.execute();
                 } else {
                     down_file.setEnabled(false);
                 }

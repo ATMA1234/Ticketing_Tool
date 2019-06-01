@@ -26,10 +26,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.transvision.ticketing.adapter.TicketsView_Adapter;
 import com.transvision.ticketing.extra.GetSetValues;
 import com.transvision.ticketing.posting.SendingData;
+
 import java.util.ArrayList;
+
 import static com.transvision.ticketing.extra.Constants.GETSET;
 import static com.transvision.ticketing.extra.Constants.TICKETS_VIEWFAILURE;
 import static com.transvision.ticketing.extra.Constants.TICKETS_VIEWSUCCESS;
@@ -49,6 +52,11 @@ public class ViewallTickets extends AppCompatActivity {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case TICKETS_VIEWSUCCESS:
+                    finish();
+                    Intent intent = new Intent(ViewallTickets.this, ViewallTickets.class);
+                    intent.putExtra("list", tickets_list);
+                    intent.putExtra(GETSET, getSetValues);//passing whole object
+                    startActivity(intent);
                     Toast.makeText(ViewallTickets.this, "Success", Toast.LENGTH_SHORT).show();
                     break;
 
@@ -80,7 +88,7 @@ public class ViewallTickets extends AppCompatActivity {
         });
         setSupportActionBar(toolbar);
 
-        sendingData = new SendingData();
+        sendingData = new SendingData(this);
         Intent intent = getIntent();
         getSetValues = (GetSetValues) intent.getSerializableExtra(GETSET);
         user_id = getSetValues.getUserId();
@@ -108,7 +116,7 @@ public class ViewallTickets extends AppCompatActivity {
                     @Override
                     public void run() {
                         swipeRefreshLayout.setRefreshing(false);
-                        //shuffleItems();
+                        shuffleItems();
                     }
                 }, 2000L);
             }
@@ -117,11 +125,10 @@ public class ViewallTickets extends AppCompatActivity {
 
     //***********************************************************************************************************
     public void shuffleItems() {
-        tickets_adapter = new TicketsView_Adapter(tickets_list, getSetValues, this);
-        tickets_adapter.notifyDataSetChanged();
-        tickets_view.setAdapter(tickets_adapter); // set the Adapter to RecyclerView
+        tickets_list.clear();
         SendingData.View_All_Tickets viewAllTickets = sendingData.new View_All_Tickets(getSetValues, handler, tickets_list);
         viewAllTickets.execute(user_id, user_password, user_role);
+
     }
 
     //*************search record in a list*********************************************************************
@@ -155,6 +162,7 @@ public class ViewallTickets extends AppCompatActivity {
             }
         });
     }
+
     //******************************delete ticket by swipe***********************************************************
     private void setUpItemTouchHelper() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0,

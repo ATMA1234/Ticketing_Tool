@@ -1,358 +1,399 @@
- <ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginEnd="@dimen/dp16"
-    android:layout_marginStart="@dimen/dp16"
-    android:layout_marginTop="@dimen/dp16"
-    android:scrollbars="none"
-    android:background="#FFCCBC"
-    android:scrollbarAlwaysDrawVerticalTrack="true">
-
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Generate Ticket"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:textColor="@color/black"
-        android:textSize="15sp"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#FF000000"/>
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:scrollbars="none">
 
     <LinearLayout
-        android:id="@+id/linear_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-      <TextView
-          android:id="@+id/txt_requested_by"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:text="Requested By:"/>
-      <TextView
-          android:id="@+id/txt_requested_by_values"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"/>
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#FF000000"/>
-
-    <LinearLayout
-        android:id="@+id/linear_hideshow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:layout_marginStart="@dimen/dp16"
+        android:layout_marginTop="@dimen/dp16"
+        android:layout_marginEnd="@dimen/dp16"
         android:orientation="vertical">
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="MOBILE"/>
-        <TextView
+            android:gravity="center"
+            android:text="Generate Ticket"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#FF000000" />
+
+        <LinearLayout
+            android:id="@+id/linear_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/txt_requested_by"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Requested By:" />
+
+            <TextView
+                android:id="@+id/txt_requested_by_values"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#FF000000" />
+
+        <LinearLayout
+            android:id="@+id/linear_hideshow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_mobile"
-            android:layout_weight="1"/>
-      </LinearLayout>
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-        <TextView
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="MOBILE" />
+
+                <TextView
+                    android:id="@+id/tv_mobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="EMAIL" />
+
+                <TextView
+                    android:id="@+id/tv_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Zone Name" />
+
+                <TextView
+                    android:id="@+id/tv_zone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="SUBDIVCODE" />
+
+                <TextView
+                    android:id="@+id/tv_subdiv_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="SUB DIV NAME" />
+
+                <TextView
+                    android:id="@+id/tv_subdiv_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="EMAIL"/>
-        <TextView
+            android:layout_marginTop="5dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TICKET ID :" />
+
+            <TextView
+                android:id="@+id/tv_ticket_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_email"
-            android:layout_weight="1"/>
-      </LinearLayout>
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-        <TextView
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="PRIORITY : "
+                android:textColor="@color/black" />
+
+            <Spinner
+                android:id="@+id/spinner_priority"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+            </Spinner>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Zone Name"/>
-        <TextView
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SEVERITY : "
+                android:textColor="@color/black" />
+
+            <Spinner
+                android:id="@+id/spinner_severity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+            </Spinner>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_zone"
-            android:layout_weight="1"/>
-      </LinearLayout>
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-        <TextView
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ASSIGN TO : "
+                android:textColor="@color/black" />
+
+            <Spinner
+                android:id="@+id/spinner_assignto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+            </Spinner>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SUBDIVCODE"/>
-        <TextView
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="DEPARTMENT : "
+                android:textColor="@color/black" />
+
+            <Spinner
+                android:id="@+id/spinner_hescomtvd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"></Spinner>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_subdiv_code"
-            android:layout_weight="1"/>
-      </LinearLayout>
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-        <TextView
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="STATUS : "
+                android:textColor="@color/black" />
+
+            <Spinner
+                android:id="@+id/spinner_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"></Spinner>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SUB DIV NAME"/>
-        <TextView
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Title"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_subdiv_name"
-            android:layout_weight="1"/>
-      </LinearLayout>
+            android:layout_height="wrap_content">
 
-    </LinearLayout>
+            <EditText
+                android:id="@+id/et_title"
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:background="@drawable/borders"
+                android:gravity="top"
+                android:hint="@string/title_hint"
+                android:inputType="text"
+                android:maxLength="100"
+                android:padding="4dp"
+                android:textSize="16dp" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:layout_marginTop="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
-      <TextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:text="TICKET ID :"/>
-      <TextView
-          android:layout_weight="1"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:id="@+id/tv_ticket_id"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-      <TextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:textColor="@color/black"
-          android:text="PRIORITY : "/>
-      <Spinner
-          android:id="@+id/spinner_priority"
-          android:layout_weight="1"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-      </Spinner>
-    </LinearLayout>
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-          <TextView
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:textColor="@color/black"
-              android:text="SEVERITY : "/>
-          <Spinner
-              android:id="@+id/spinner_severity"
-              android:layout_weight="1"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/desc_tv"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-          </Spinner>
-      </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-      <TextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:textColor="@color/black"
-          android:text="ASSIGN TO : "/>
-      <Spinner
-          android:id="@+id/spinner_assignto"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1">
+            <EditText
+                android:id="@+id/et_description"
+                style="@style/Base.TextAppearance.AppCompat.Large"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp80"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/borders"
+                android:gravity="top"
+                android:hint="@string/desc_hint"
+                android:inputType="text"
+                android:maxLength="500"
+                android:padding="4dp"
+                android:textSize="16dp" />
+        </LinearLayout>
 
-      </Spinner>
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-      <TextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:textColor="@color/black"
-          android:text="DEPARTMENT : "/>
-      <Spinner
-          android:id="@+id/spinner_hescomtvd"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1">
-      </Spinner>
-    </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/narration_tv"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-      <TextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:textColor="@color/black"
-          android:text="STATUS : "/>
-      <Spinner
-          android:id="@+id/spinner_status"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1">
-      </Spinner>
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-      <TextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:gravity="center"
-          android:textSize="15sp"
-          android:textStyle="bold"
-          android:text="Title"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-      <EditText
-          android:id="@+id/et_title"
-          android:layout_width="match_parent"
-          android:layout_height="53dp"
-          android:hint="@string/title_hint"
-          android:inputType="text"
-          android:background="@drawable/borders"
-          android:maxLength="100"
-          android:gravity="top"
-          android:textSize="16dp"
-          android:padding="4dp"/>
-    </LinearLayout>
+            <EditText
+                android:id="@+id/et_narration"
+                style="@style/Base.TextAppearance.AppCompat.Large"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp80"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/borders"
+                android:gravity="top"
+                android:hint="@string/narration_hint"
+                android:inputType="text"
+                android:maxLength="1000"
+                android:padding="4dp"
+                android:textSize="16dp" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <TextView
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:text="@string/desc_tv"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-      <EditText
-          android:layout_marginTop="10dp"
-          android:id="@+id/et_description"
-          android:layout_width="match_parent"
-          android:layout_height="@dimen/dp80"
-          android:inputType="text"
-          android:maxLength="500"
-          android:hint="@string/desc_hint"
-          android:background="@drawable/borders"
-          android:textSize="16dp"
-          android:gravity="top"
-          android:padding="4dp"
-          style="@style/Base.TextAppearance.AppCompat.Large"/>
-    </LinearLayout>
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="match_parent">
-      <TextView
-          android:layout_marginTop="10dp"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:textSize="15sp"
-          android:textStyle="bold"
-          android:gravity="center"
-          android:text="@string/narration_tv"/>
-      </LinearLayout>
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="match_parent">
-      <EditText
-          android:layout_marginTop="10dp"
-          android:id="@+id/et_narration"
-          android:layout_width="match_parent"
-          android:layout_height="@dimen/dp80"
-          android:inputType="text"
-          android:maxLength="1000"
-          android:hint="@string/narration_hint"
-          android:textSize="16dp"
-          android:background="@drawable/borders"
-          android:gravity="top"
-          android:padding="4dp"
-          style="@style/Base.TextAppearance.AppCompat.Large"/>
-      </LinearLayout>
-
-      <ImageView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:id="@+id/iv_upload_image"/>
+        <ImageView
+            android:id="@+id/iv_upload_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <Button
-           android:id="@+id/button_pick"
-           android:layout_width="match_parent"
+            android:id="@+id/button_pick"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/dp40"
             android:layout_marginTop="@dimen/dp40"
-           android:background="@drawable/borders"
+            android:background="@drawable/borders"
             android:text="Browse File"
-           android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:textColor="@color/black" />
 
 
-    <ImageView
-    android:id="@+id/image"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:visibility="gone"/>
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
-    <Button
-        android:id="@+id/btn_submit"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:background="#84C9FD"
-        android:textStyle="bold"
-        android:text="SUBMIT"
-        android:textColor="#f8f8ff" />
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:text="SUBMIT"
+            android:textColor="#f8f8ff"
+            android:textStyle="bold" />
 
-  </LinearLayout>
+    </LinearLayout>
 
 </ScrollView>

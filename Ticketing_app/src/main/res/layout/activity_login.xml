@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFCCBC"
     tools:context=".LoginActivity">
 
 
@@ -17,7 +15,7 @@
         <ImageView
             android:id="@+id/subdiv_logo"
             android:layout_width="match_parent"
-            android:layout_height="125dp"
+            android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
             android:scaleType="fitXY"
@@ -113,33 +111,18 @@
             android:layout_marginEnd="@dimen/dp64"
             android:layout_marginStart="@dimen/dp64"
             android:layout_marginTop="20dp"
-            android:orientation="vertical"
-            android:visibility="invisible">
+            android:gravity="center"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/login_user_txt3"
-                android:layout_width="match_parent"
+
+            <CheckBox
+                android:id="@+id/login_checkbox"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/dp80"
-                android:layout_marginStart="@dimen/dp80"
-                android:text="@string/login_user_txt"
-                android:textColor="@color/spinner_label"
-                android:textSize="@dimen/text14" />
+                android:text="Testing App"
+                android:textStyle="bold" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp1"
-                android:background="@color/black" />
 
-            <Spinner
-                android:id="@+id/login_users_spin3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp1"
-                android:background="@color/black" />
         </LinearLayout>
 
 
@@ -152,21 +135,20 @@
             <Button
                 android:id="@+id/login_btn"
                 android:layout_width="180dp"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_margin="@dimen/dp32"
-                android:background="@drawable/buttonpressed"
-                android:backgroundTint="#ff0000"
                 android:text="@string/login_btn"
-                android:textColor="#f8f8ff"/>
+                android:textColor="#f8f8ff" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/dp20">
+            android:layout_marginTop="@dimen/dp20"
+            android:orientation="vertical">
+
             <TextView
                 android:id="@+id/company_details_txt"
                 android:layout_width="match_parent"

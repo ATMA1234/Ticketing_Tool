@@ -20,13 +20,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.transvision.ticketing.extra.FileOpen;
 import com.transvision.ticketing.extra.FunctionsCall;
 import com.transvision.ticketing.extra.GetSetValues;
 import com.transvision.ticketing.posting.FTPAPI;
 import com.transvision.ticketing.posting.SendingData;
+
 import java.io.File;
 import java.util.ArrayList;
+
 import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_ERROR;
 import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_FAILURE;
 import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_SUCCESS;
@@ -43,14 +46,14 @@ public class ViewTicketDetails extends AppCompatActivity {
     Button btn_edit, btn_details;
     String ticket_no = "", ticket_narration = "", ticket_file = "", ticket_generated_by = "", ticket_generated_on = "",
             ticket_status = "", ticket_close = "", ticket_subdivision_code = "", ticket_mr_code = "", tic_comment = "",
-            ticket_priority = "", ticket_severity = "", ticket_assign_to = "", ticket_hescom_tvd = "", ticket_title = "",
-            ticket_description = "";
+            ticket_priority = "", ticket_severity = "", ticket_assign_to = "", ticket_hescom_tvd = "", ticket_title = "", ticket_description = "";
     Toolbar toolbar;
     GetSetValues getSetValues;
     ProgressDialog progressDialog;
     FunctionsCall functionsCall;
     SendingData sendingData;
     ArrayList<GetSetValues> arrayList1;
+    FTPAPI ftpapi;
     //************************************************************************************************************************
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -62,7 +65,8 @@ public class ViewTicketDetails extends AppCompatActivity {
                     break;
 
                 case DOWNLOAD_FILE_FAILURE:
-                    new FTPAPI().new Download_file(ticket_file, handler).execute();
+                    FTPAPI.Download_file upload_file = ftpapi.new Download_file(ticket_file, handler);
+                    upload_file.execute();
                     break;
 
                 case DOWNLOAD_FILE_ERROR:
@@ -73,7 +77,7 @@ public class ViewTicketDetails extends AppCompatActivity {
                 case TICKET_UPDATE_VIEWSUCCESS:
                     Intent intent = new Intent(ViewTicketDetails.this, ViewUpdateTickets.class);
                     intent.putExtra("list", arrayList1);
-                    intent.putExtra(GETSET, getSetValues);
+                    intent.putExtra(GETSET, getSetValues);//passing whole oject
                     startActivity(intent);
                     finish();
                     break;
@@ -129,8 +133,9 @@ public class ViewTicketDetails extends AppCompatActivity {
         getSetValues = new GetSetValues();
         progressDialog = new ProgressDialog(this);
         functionsCall = new FunctionsCall();
-        sendingData = new SendingData();
+        sendingData = new SendingData(this);
         arrayList1 = new ArrayList<>();
+        ftpapi = new FTPAPI(this);
 
         //********************Getting Data***********************************************************************
         Bundle extras = getIntent().getExtras();
@@ -174,8 +179,7 @@ public class ViewTicketDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 arrayList1.clear();
-                SendingData.View_Update_Tickets view_update_tickets = sendingData.new View_Update_Tickets(getSetValues, handler,
-                        arrayList1);
+                SendingData.View_Update_Tickets view_update_tickets = sendingData.new View_Update_Tickets(getSetValues, handler, arrayList1);
                 view_update_tickets.execute(ticket_no);
             }
         });
@@ -210,9 +214,9 @@ public class ViewTicketDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(ticket_file)) {
-                    functionsCall.showprogressdialog("Downloading",
-                            "Downloading file please wait to download...", progressDialog);
-                    new FTPAPI().new Download_file(ticket_file, handler).execute();
+                    functionsCall.showprogressdialog("Downloading.....", "Downloading file please wait to download...", progressDialog);
+                    FTPAPI.Download_file download_file = ftpapi.new Download_file(ticket_file, handler);
+                    download_file.execute();
                 } else {
                     file_download.setEnabled(false);
                 }
@@ -232,8 +236,7 @@ public class ViewTicketDetails extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                SendingData.View_Update_Tickets view_update_tickets = sendingData.new View_Update_Tickets(getSetValues, handler,
-                        arrayList1);
+                SendingData.View_Update_Tickets view_update_tickets = sendingData.new View_Update_Tickets(getSetValues, handler, arrayList1);
                 view_update_tickets.execute(ticket_no);
                 break;
         }
@@ -247,8 +250,8 @@ public class ViewTicketDetails extends AppCompatActivity {
             case DLG_DOWNLOAD_PREVIEW:
                 AlertDialog.Builder download = new AlertDialog.Builder(ViewTicketDetails.this);
                 download.setCancelable(false);
-                download.setTitle("Download file View");
-                download.setMessage("Do you want to view download file..??");
+                download.setTitle("View file");
+                download.setMessage("Do you want to view this file?");
                 download.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

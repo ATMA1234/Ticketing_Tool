@@ -13,9 +13,11 @@ import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.transvision.ticketing.R;
 import com.transvision.ticketing.ViewTicketDetails;
 import com.transvision.ticketing.extra.GetSetValues;
+
 import java.util.ArrayList;
 
 public class TicketsView_Adapter extends RecyclerView.Adapter<TicketsView_Adapter.TicketHolder> implements Filterable {
@@ -31,6 +33,7 @@ public class TicketsView_Adapter extends RecyclerView.Adapter<TicketsView_Adapte
         this.context = context;
     }
 
+    @NonNull
     @Override
     public TicketHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ticket_view_details, parent, false);
@@ -92,7 +95,7 @@ public class TicketsView_Adapter extends RecyclerView.Adapter<TicketsView_Adapte
         TextView tv_tic_no, tv_tic_narr, tv_tic_file, tv_tic_gen_by, tv_tic_gen_on, tv_tic_status, tv_tic_close;
         LinearLayout tic_close_layout;
 
-        public TicketHolder(View itemView) {
+        private TicketHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             tic_close_layout = itemView.findViewById(R.id.tic_close_layout);

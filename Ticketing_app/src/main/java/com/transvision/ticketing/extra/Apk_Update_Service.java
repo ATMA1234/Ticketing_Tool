@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 
+import java.util.Objects;
+
 @SuppressLint("Registered")
 public class Apk_Update_Service extends Service {
     FunctionsCall functionCall;
@@ -38,6 +40,7 @@ public class Apk_Update_Service extends Service {
         return null;
     }
 
+    @SuppressLint("ShortAlarm")
     private void start_version_check() {
         functionCall.logStatus("Version_receiver Checking..");
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -46,7 +49,7 @@ public class Apk_Update_Service extends Service {
         if (!alarmRunning) {
             functionCall.logStatus("Version_receiver Started..");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), (10000), pendingIntent);
+            Objects.requireNonNull(alarmManager).setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), (10000), pendingIntent);
         } else functionCall.logStatus("Version_receiver Already running..");
     }
 

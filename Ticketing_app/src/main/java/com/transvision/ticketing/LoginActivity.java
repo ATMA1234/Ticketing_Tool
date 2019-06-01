@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -13,9 +14,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+
+
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -36,10 +42,13 @@ import static com.transvision.ticketing.extra.Constants.APK_FILE_FOUND;
 import static com.transvision.ticketing.extra.Constants.APK_FILE_NOT_FOUND;
 import static com.transvision.ticketing.extra.Constants.LOGIN_FAILURE;
 import static com.transvision.ticketing.extra.Constants.LOGIN_SUCCESS;
+import static com.transvision.ticketing.extra.Constants.PROD_URL;
+import static com.transvision.ticketing.extra.Constants.TEST_URL;
+import static com.transvision.ticketing.extra.Constants.TICKETING_TESTING;
 
 public class LoginActivity extends AppCompatActivity {
     private static final int DLG_LOGIN = 2;
-    private static final int DLG_LOGIN_MR = 3;
+    //    private static final int DLG_LOGIN_MR = 3;
     private static final int DLG_APK_UPDATE_SUCCESS = 4;
     private static final int DLG_APK_NOT_FOUND = 5;
     Spinner role_spinner1;
@@ -48,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
     GetSetValues getSetValues;
     FunctionsCall fcall;
     Button login_btn;
-    String main_role1 = "", login_id = "", role_password = "";
+    String main_role = "", login_id = "", role_password = "";
     Boolean Internet = false;
     ProgressDialog progressDialog;
     ArrayList<GetSetValues> tickets_list;
@@ -57,6 +66,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView vesrion;
     String main_curr_version = "";
     FTPAPI ftpapi;
+    CheckBox test_app;
     //*********************************************handler***************************************************************
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -68,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                         showdialog(DLG_APK_UPDATE_SUCCESS);
                     else {
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("ROLE", main_role1);
+                        intent.putExtra("ROLE", main_role);
                         intent.putExtra("UserId", login_id);
                         intent.putExtra("UserPassword", role_password);
                         intent.putExtra("SUBDIVCODE", getSetValues.getSubdivision());
@@ -95,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 case APK_FILE_NOT_FOUND:
                     progressDialog.dismiss();
-                    showDialog(DLG_APK_NOT_FOUND);
+//                    showdialog(DLG_APK_NOT_FOUND);
                     break;
 
             }
@@ -110,6 +120,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         //*****************************set app version to drawer**************************************************************
         PackageInfo pInfo = null;
         try {
@@ -121,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
             main_curr_version = pInfo.versionName;
         }
         //****************************************************************************************************************
+        test_app = findViewById(R.id.login_checkbox);
         vesrion = findViewById(R.id.text_version);
         vesrion.setText("Version" + " : " + main_curr_version);
         role_spinner1 = findViewById(R.id.login_users_spin2);
@@ -129,12 +142,28 @@ public class LoginActivity extends AppCompatActivity {
         role_spinner1.setAdapter(roleAdapter1);
         login_btn = findViewById(R.id.login_btn);
         fcall = new FunctionsCall();
-        sendingData = new SendingData();
+        sendingData = new SendingData(LoginActivity.this);
         getSetValues = new GetSetValues();
         tickets_list = new ArrayList<>();
         arrayList = new ArrayList<>();
         progressDialog = new ProgressDialog(LoginActivity.this);
-        ftpapi = new FTPAPI();
+        ftpapi = new FTPAPI(this);
+//***********************************************************************************************************
+        test_app.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (test_app.isChecked()) {
+                    SavePreferences(TICKETING_TESTING, TEST_URL);
+                    sendingData = new SendingData(LoginActivity.this);
+                    Toast.makeText(LoginActivity.this, "Test server", Toast.LENGTH_SHORT).show();
+                } else {
+                    SavePreferences(TICKETING_TESTING, PROD_URL);
+                    sendingData = new SendingData(LoginActivity.this);
+                    Toast.makeText(LoginActivity.this, "Real server", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+//***********************************************************************************************************
 
         for (int i = 0; i < getResources().getStringArray(R.array.first_login).length; i++) {
             getSetValues = new GetSetValues();
@@ -151,36 +180,57 @@ public class LoginActivity extends AppCompatActivity {
                 TextView tvrole = findViewById(R.id.spinner_txt);
                 String role = tvrole.getText().toString();
                 if (!role.equals("--SELECT--")) {
-                    main_role1 = role;
-                    if (role.equals("AEE")) {
-                        showdialog(DLG_LOGIN);
-                    } else if (role.equals("ADMIN")) {
-                        showdialog(DLG_LOGIN);
-                    } else if (role.equals("AAO")) {
-                        showdialog(DLG_LOGIN);
-                    } else if (role.equals("CW")) {
-                        showdialog(DLG_LOGIN);
-                    } else if (role.equals("CORP_MD")) {
-                        showdialog(DLG_LOGIN);
-                    } else if (role.equals("CORP_DT")) {
-                        showdialog(DLG_LOGIN);
-                    } else if (role.equals("CORP_SE")) {
-                        showdialog(DLG_LOGIN);
-                    } else if (role.equals("CORP_EE")) {
-                        showdialog(DLG_LOGIN);
-                    } else if (role.equals("CORP_AO")) {
-                        showdialog(DLG_LOGIN);
-                    } else if (role.equals("CORP_TL")) {
-                        showdialog(DLG_LOGIN);
-//                    } else if (role.equals("MR")) {
-//                        showdialog(DLG_LOGIN_MR);
+                    main_role = role;
+                    switch (main_role) {
+                        case "AEE":
+                            showdialog(DLG_LOGIN);
+                            break;
+                        case "ADMIN":
+                            showdialog(DLG_LOGIN);
+                            break;
+                        case "AAO":
+                            showdialog(DLG_LOGIN);
+                            break;
+                        case "CW":
+                            showdialog(DLG_LOGIN);
+                            break;
+                        case "CORP_MD":
+                            showdialog(DLG_LOGIN);
+                            break;
+                        case "CORP_DT":
+                            showdialog(DLG_LOGIN);
+                            break;
+                        case "CORP_SE":
+                            showdialog(DLG_LOGIN);
+                            break;
+                        case "CORP_EE":
+                            showdialog(DLG_LOGIN);
+                        case "CORP_AO":
+                            showdialog(DLG_LOGIN);
+                            break;
+                        case "CORP_TL":
+                            showdialog(DLG_LOGIN);
+                            break;
+//                        case "MR":
+//                            showdialog(DLG_LOGIN_MR);
+//                        break;
                     }
-                }
+
+                } else
+                    Toast.makeText(LoginActivity.this, "Please select Role!!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    //********************************************show login dailog************************************************************
+    //***************************************************************************************************************************************************
+    public void SavePreferences(String key, String value) {
+        SharedPreferences sharedPreferences = getSharedPreferences("MY_SHARED_PREF", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    //********************************************show login dailog***********************************************************************************
     private void showdialog(int id) {
         Dialog dialog;
         switch (id) {
@@ -188,7 +238,7 @@ public class LoginActivity extends AppCompatActivity {
                 AlertDialog.Builder login_dlg = new AlertDialog.Builder(this);
                 login_dlg.setTitle(getResources().getString(R.string.dialog_login));
                 login_dlg.setCancelable(false);
-                LinearLayout dlg_linear = (LinearLayout) getLayoutInflater().inflate(R.layout.login_layout, null);
+                @SuppressLint("InflateParams") LinearLayout dlg_linear = (LinearLayout) getLayoutInflater().inflate(R.layout.login_layout, null);
                 login_dlg.setView(dlg_linear);
                 final EditText et_loginid = dlg_linear.findViewById(R.id.et_login_id);
                 final EditText et_password = dlg_linear.findViewById(R.id.et_login_password);
@@ -235,24 +285,20 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
                 login_dialog.show();
-                (login_dialog).getButton(AlertDialog.BUTTON_POSITIVE).
-                        setTextColor(Color.BLUE);
-                (login_dialog).getButton(AlertDialog.BUTTON_NEGATIVE).
-                        setTextColor(Color.RED);
+                (login_dialog).getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE);
+                (login_dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED);
                 break;
 
             case DLG_APK_UPDATE_SUCCESS:
                 android.app.AlertDialog.Builder appupdate = new android.app.AlertDialog.Builder(this);
                 appupdate.setTitle("App Updates");
                 appupdate.setCancelable(false);
-                appupdate.setMessage("Your current version number : " + main_curr_version +
-                        "\n" + "\n" +
+                appupdate.setMessage("Your current version number : " + main_curr_version + "\n" + "\n" +
                         "New version is available : " + getSetValues.getApp_version() + "\n");
                 appupdate.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        FTPAPI.Download_apk downloadApk = ftpapi.new Download_apk(handler, progressDialog,
-                                getSetValues.getApp_version());
+                        FTPAPI.Download_apk downloadApk = ftpapi.new Download_apk(handler, progressDialog, getSetValues.getApp_version());
                         downloadApk.execute();
                     }
                 });
@@ -278,7 +324,7 @@ public class LoginActivity extends AppCompatActivity {
                 dialog = apknotfound.create();
                 dialog.show();
                 break;
-//**********************************************MR login***************************************************************
+//**********************************************MR login**************************************************************************************
 //            case DLG_LOGIN_MR:
 //                AlertDialog.Builder login_dlg_mr = new AlertDialog.Builder(this);
 //                login_dlg_mr.setTitle(getResources().getString(R.string.dialog_login));
@@ -335,5 +381,6 @@ public class LoginActivity extends AppCompatActivity {
 //                break;
         }
     }
+    //***************************************************************************************************************************************************
 }
 

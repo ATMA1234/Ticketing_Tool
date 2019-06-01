@@ -1,17 +1,22 @@
 package com.transvision.ticketing.posting;
 
 import android.os.Handler;
+
 import com.transvision.ticketing.extra.FunctionsCall;
 import com.transvision.ticketing.extra.GetSetValues;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import static com.transvision.ticketing.extra.Constants.GENERATE_TICKET_ERROR;
 import static com.transvision.ticketing.extra.Constants.GENERATE_TICKET_FAILURE;
 import static com.transvision.ticketing.extra.Constants.GENERATE_TICKET_SUCCESS;
 import static com.transvision.ticketing.extra.Constants.LOGIN_FAILURE;
@@ -20,6 +25,7 @@ import static com.transvision.ticketing.extra.Constants.TICKETS_VIEWFAILURE;
 import static com.transvision.ticketing.extra.Constants.TICKETS_VIEWSUCCESS;
 import static com.transvision.ticketing.extra.Constants.TICKET_UPDATE_VIEWFAILURE;
 import static com.transvision.ticketing.extra.Constants.TICKET_UPDATE_VIEWSUCCESS;
+import static com.transvision.ticketing.extra.Constants.UPDATE_TICKET_ERROR;
 import static com.transvision.ticketing.extra.Constants.UPDATE_TICKET_FAILURE;
 import static com.transvision.ticketing.extra.Constants.UPDATE_TICKET_SUCCESS;
 
@@ -62,7 +68,7 @@ public class ReceivingData {
     }
 
     //******************************************all tickets*******************************************************
-    public void all_tickets_status(String result, GetSetValues getSetValues, Handler handler, ArrayList<GetSetValues> arrayList) {
+     void all_tickets_status(String result, Handler handler, ArrayList<GetSetValues> arrayList) {
         result = parseServerXML(result);
         JSONArray jsonArray;
         try {
@@ -70,7 +76,7 @@ public class ReceivingData {
             if (jsonArray.length() > 0) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    getSetValues = new GetSetValues();
+                    GetSetValues getSetValues = new GetSetValues();
                     getSetValues.setTic_id(jsonObject.getString("TIC_ID")); //1
                     getSetValues.setTic_narr(jsonObject.getString("TIC_NARR"));
                     getSetValues.setTic_file(jsonObject.getString("TIC_FILE"));
@@ -101,7 +107,7 @@ public class ReceivingData {
     }
 
     //**************************************generate_ticket_status***********************************************************
-    public void generate_ticket_status(String result, Handler handler, GetSetValues getSetValues) {
+     void generate_ticket_status(String result, Handler handler, GetSetValues getSetValues) {
         result = parseServerXML(result);
         functionsCall.logStatus("Ticket Status: " + result);
         JSONArray jsonArray;
@@ -115,12 +121,12 @@ public class ReceivingData {
             } else handler.sendEmptyMessage(GENERATE_TICKET_FAILURE);
         } catch (JSONException e) {
             e.printStackTrace();
-            handler.sendEmptyMessage(GENERATE_TICKET_FAILURE);
+            handler.sendEmptyMessage(GENERATE_TICKET_ERROR);
         }
     }
 
     //************************************ticket_update_status****************************************************************
-    public void ticket_update_status(String result, Handler handler, GetSetValues getSetValues) {
+     void ticket_update_status(String result, Handler handler) {
         result = parseServerXML(result);
         functionsCall.logStatus("Update Ticket: " + result);
         JSONObject jsonObject;
@@ -131,11 +137,12 @@ public class ReceivingData {
             else handler.sendEmptyMessage(UPDATE_TICKET_FAILURE);
         } catch (JSONException e) {
             e.printStackTrace();
-            handler.sendEmptyMessage(UPDATE_TICKET_FAILURE);
+            handler.sendEmptyMessage(UPDATE_TICKET_ERROR);
         }
     }
+
     //******************************FOR getting result based on user LOGIN*****************************************************
-    public void get_Details(String result, GetSetValues getSetValues, Handler handler, ArrayList<GetSetValues> arrayList) {
+     void get_Details(String result, GetSetValues getSetValues, Handler handler) {
         result = parseServerXML(result);
         JSONArray jsonArray;
         try {
@@ -158,8 +165,7 @@ public class ReceivingData {
     }
 
     //******************************************Update_tickets_status******************************************************
-    public void all_tickets_update_status(String result, GetSetValues getSetValues, Handler handler,
-                                          ArrayList<GetSetValues> arrayList1) {
+     void all_tickets_update_status(String result, Handler handler, ArrayList<GetSetValues> arrayList1) {
         result = parseServerXML(result);
         JSONArray jsonArray;
         try {
@@ -167,7 +173,7 @@ public class ReceivingData {
             if (jsonArray.length() > 0) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    getSetValues = new GetSetValues();
+                    GetSetValues getSetValues = new GetSetValues();
                     getSetValues.setUp_tic_id(jsonObject.getString("TIC_ID")); //1
                     getSetValues.setUp_tic_narr(jsonObject.getString("TIC_NARR"));
                     getSetValues.setUp_tic_file(jsonObject.getString("TIC_FILE"));

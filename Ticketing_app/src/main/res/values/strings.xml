@@ -111,8 +111,6 @@
     </string-array>
 
     <string-array name="assign_to">
-        <item>--SELECT--</item>
-        <item>HESCOM</item>
         <item>TVD</item>
     </string-array>
 
@@ -226,4 +224,5 @@
     <string name="narration_tv">Narration</string>
     <string name="desc_tv">Description</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_login2">LoginActivity2</string>
 </resources>

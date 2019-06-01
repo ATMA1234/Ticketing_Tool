@@ -1,41 +1,70 @@
 package com.transvision.ticketing.posting;
 
-        import android.annotation.SuppressLint;
-        import android.app.ProgressDialog;
-        import android.os.AsyncTask;
-        import android.os.Handler;
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Handler;
 
-        import com.transvision.ticketing.extra.FunctionsCall;
+import com.transvision.ticketing.extra.FunctionsCall;
 
-        import org.apache.commons.net.ftp.FTP;
-        import org.apache.commons.net.ftp.FTPClient;
-        import org.apache.commons.net.ftp.FTPConnectionClosedException;
-        import org.apache.commons.net.ftp.FTPFile;
-        import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPConnectionClosedException;
+import org.apache.commons.net.ftp.FTPFile;
 
-        import java.io.BufferedOutputStream;
-        import java.io.File;
-        import java.io.FileInputStream;
-        import java.io.FileNotFoundException;
-        import java.io.FileOutputStream;
-        import java.io.IOException;
-        import java.io.InputStream;
-        import java.io.OutputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-        import static com.transvision.ticketing.extra.Constants.APK_FILE_DOWNLOADED;
-        import static com.transvision.ticketing.extra.Constants.APK_FILE_NOT_FOUND;
-        import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_ERROR;
-        import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_FAILURE;
-        import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_SUCCESS;
-        import static com.transvision.ticketing.extra.Constants.FILE_UPLOADED;
-        import static com.transvision.ticketing.extra.Constants.FILE_UPLOADED_ERROR;
-        import static com.transvision.ticketing.extra.Constants.FTP_HOST;
-        import static com.transvision.ticketing.extra.Constants.FTP_PASS;
-        import static com.transvision.ticketing.extra.Constants.FTP_PORT;
-        import static com.transvision.ticketing.extra.Constants.FTP_USER;
+import static android.content.Context.MODE_PRIVATE;
+import static com.transvision.ticketing.extra.Constants.APK_FILE_DOWNLOADED;
+import static com.transvision.ticketing.extra.Constants.APK_FILE_NOT_FOUND;
+import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_ERROR;
+import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_FAILURE;
+import static com.transvision.ticketing.extra.Constants.DOWNLOAD_FILE_SUCCESS;
+import static com.transvision.ticketing.extra.Constants.FTP_HOST;
+import static com.transvision.ticketing.extra.Constants.FTP_PASS;
+import static com.transvision.ticketing.extra.Constants.FTP_PORT;
+import static com.transvision.ticketing.extra.Constants.FTP_USER;
+import static com.transvision.ticketing.extra.Constants.PROD_URL;
+import static com.transvision.ticketing.extra.Constants.TEST_FTP_HOST;
+import static com.transvision.ticketing.extra.Constants.TEST_FTP_PASS;
+import static com.transvision.ticketing.extra.Constants.TEST_FTP_USER;
+import static com.transvision.ticketing.extra.Constants.TICKETING_TESTING;
+
 
 public class FTPAPI {
     private FunctionsCall functionsCall = new FunctionsCall();
+    private String FINAL_FTP_USER, FINAL_FTP_PASSWORD, FINAL_FTP_HOST;
+
+    public FTPAPI(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MY_SHARED_PREF", MODE_PRIVATE);
+        if (StringUtils.startsWithIgnoreCase(sharedPreferences.getString(TICKETING_TESTING, ""), PROD_URL)) {
+            server_links(0);
+        } else {
+            server_links(1);
+        }
+    }
+
+    private void server_links(int value) {
+        if (value == 0) {
+            FINAL_FTP_HOST = FTP_HOST;
+            FINAL_FTP_USER = FTP_USER;
+            FINAL_FTP_PASSWORD = FTP_PASS;
+
+        } else {
+            FINAL_FTP_HOST = TEST_FTP_HOST;
+            FINAL_FTP_USER = TEST_FTP_USER;
+            FINAL_FTP_PASSWORD = TEST_FTP_PASS;
+        }
+    }
 
     //    @SuppressLint("StaticFieldLeak")
 //    public class Upload_file extends AsyncTask<String, String, String> {
@@ -137,15 +166,15 @@ public class FTPAPI {
             functionsCall.logStatus("TIC_tool_Download 2");
             try {
                 functionsCall.logStatus("TIC_tool_Download 3");
-                ftp_1.connect(FTP_HOST, FTP_PORT);
+                ftp_1.connect(FINAL_FTP_HOST, FTP_PORT);
                 functionsCall.logStatus("TIC_tool_Download 4");
             } catch (IOException e) {
                 e.printStackTrace();
             }
             try {
                 functionsCall.logStatus("TIC_tool_Download 5");
-                ftp_1.login(FTP_USER, FTP_PASS);
-                download_file = ftp_1.login(FTP_USER, FTP_PASS);
+                ftp_1.login(FINAL_FTP_USER, FINAL_FTP_PASSWORD);
+                download_file = ftp_1.login(FINAL_FTP_USER, FINAL_FTP_PASSWORD);
                 functionsCall.logStatus("TIC_tool_Download 6");
             } catch (FTPConnectionClosedException e) {
                 e.printStackTrace();
@@ -245,7 +274,7 @@ public class FTPAPI {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            functionsCall.showprogressdialog("Downloading...","Downloading apk file please wait...", progressDialog);
+            functionsCall.showprogressdialog("Downloading...", "Downloading apk file please wait...", progressDialog);
         }
 
         @Override
@@ -258,15 +287,15 @@ public class FTPAPI {
             functionsCall.logStatus("Main_Apk 2");
             try {
                 functionsCall.logStatus("Main_Apk 3");
-                ftp_1.connect(FTP_HOST, FTP_PORT);
+                ftp_1.connect(FINAL_FTP_HOST, FTP_PORT);
                 functionsCall.logStatus("Main_Apk 4");
             } catch (IOException e) {
                 e.printStackTrace();
             }
             try {
                 functionsCall.logStatus("Main_Apk 5");
-                ftp_1.login(FTP_USER, FTP_PASS);
-                downloadapk = ftp_1.login(FTP_USER, FTP_PASS);
+                ftp_1.login(FINAL_FTP_USER, FINAL_FTP_PASSWORD);
+                downloadapk = ftp_1.login(FINAL_FTP_USER, FINAL_FTP_PASSWORD);
                 functionsCall.logStatus("Main_Apk 6");
             } catch (FTPConnectionClosedException e) {
                 e.printStackTrace();
@@ -324,6 +353,7 @@ public class FTPAPI {
                         functionsCall.logStatus("FTP File length: " + filelength);
                         OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
                         InputStream inputStream = ftp_1.retrieveFileStream("/Android/Ticketing/APK/" + "Ticketing_app_" + update_version + ".apk");
+                        //progress dialog with seekbar
                         byte[] bytesIn = new byte[1024];
                         while ((count = inputStream.read(bytesIn)) != -1) {
                             read += count;

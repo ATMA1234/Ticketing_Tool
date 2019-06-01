@@ -1,10 +1,17 @@
 package com.transvision.ticketing.posting;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Log;
+
 import com.transvision.ticketing.extra.FunctionsCall;
 import com.transvision.ticketing.extra.GetSetValues;
+
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -18,21 +25,47 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.ssl.HttpsURLConnection;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.transvision.ticketing.extra.Constants.PROD_URL;
 import static com.transvision.ticketing.extra.Constants.Service;
+import static com.transvision.ticketing.extra.Constants.TEST_TRM_URL;
+import static com.transvision.ticketing.extra.Constants.TICKETING_TESTING;
 import static com.transvision.ticketing.extra.Constants.TRM_URL;
 
 public class SendingData {
     private ReceivingData receivingData = new ReceivingData();
-    private static final String BASE_URL = TRM_URL + Service;
+    private String BASE_URL;
     private FunctionsCall functionsCall = new FunctionsCall();
+
+
+    public SendingData(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MY_SHARED_PREF", MODE_PRIVATE);
+        String test_real = sharedPreferences.getString(TICKETING_TESTING, "");
+        Log.d("Debug", test_real);
+        if (StringUtils.startsWithIgnoreCase(sharedPreferences.getString(TICKETING_TESTING, ""), PROD_URL)) {
+            server_links(0);
+        } else {
+            server_links(1);
+        }
+    }
+
+    private void server_links(int value) {
+        if (value == 0) {
+            BASE_URL = TRM_URL + Service;
+        } else {
+            BASE_URL = TEST_TRM_URL + Service;
+        }
+    }
 
     private String urlPostConnection(String Post_Url, HashMap<String, String> datamap) throws IOException {
         StringBuilder response = new StringBuilder();
         URL url = new URL(Post_Url);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(15000);
-        conn.setConnectTimeout(15000);
+        conn.setReadTimeout(4*60*1000);
+        conn.setConnectTimeout(4*60*1000);
         conn.setRequestMethod("POST");
         conn.setDoInput(true);
         conn.setDoOutput(true);
@@ -93,7 +126,7 @@ public class SendingData {
         return response.toString();
     }
 
-    //********************************view all tickets******************************************************
+    //******************************************************view all tickets******************************************************
     @SuppressLint("StaticFieldLeak")
     public class View_All_Tickets extends AsyncTask<String, String, String> {
         String response = "";
@@ -124,7 +157,7 @@ public class SendingData {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            receivingData.all_tickets_status(result, getSetValues, handler, arrayList);
+            receivingData.all_tickets_status(result, handler, arrayList);
         }
     }
 
@@ -193,7 +226,7 @@ public class SendingData {
         }
     }
 
-    //***********************************update ticket********************************************************
+    //**********************************************update ticket*******************************************************************
     @SuppressLint("StaticFieldLeak")
     public class TicketUpdate extends AsyncTask<String, String, String> {
         String response = "";
@@ -250,10 +283,11 @@ public class SendingData {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            receivingData.ticket_update_status(result, handler, getSetValues);
+            receivingData.ticket_update_status(result, handler);
         }
     }
-    //********************************view update tickets******************************************************
+
+    //*******************************************view updated tickets*****************************************************************
     @SuppressLint("StaticFieldLeak")
     public class View_Update_Tickets extends AsyncTask<String, String, String> {
         String response = "";
@@ -282,11 +316,11 @@ public class SendingData {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            receivingData.all_tickets_update_status(result, getSetValues, handler, arrayList);
+            receivingData.all_tickets_update_status(result, handler, arrayList);
         }
     }
 
-    //***********************************For user Login***********************************************************************
+    //**********************************************For user Login***********************************************************************
     @SuppressLint("StaticFieldLeak")
     public class Login extends AsyncTask<String, String, String> {
         String response = "";
@@ -302,7 +336,7 @@ public class SendingData {
 
         @Override
         protected String doInBackground(String... params) {
-            HashMap<String, String> datamap = new HashMap();
+            HashMap<String, String> datamap = new HashMap<>();
             datamap.put("username", params[0]);
             datamap.put("password", params[1]);
             try {
@@ -316,10 +350,10 @@ public class SendingData {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            receivingData.get_Details(result, getSetValues, handler, arrayList);
+            receivingData.get_Details(result, getSetValues, handler);
         }
     }
-    //***********************************For MR Login***********************************************************************
+    //**********************************************For MR Login***********************************************************************
 //    @SuppressLint("StaticFieldLeak")
 //    public class MRLogin extends AsyncTask<String, String, String> {
 //        String response = "";
@@ -350,34 +384,6 @@ public class SendingData {
 //        protected void onPostExecute(String result) {
 //            super.onPostExecute(result);
 //            receivingData.getMR_Details(result, getSetValues, handler, arrayList);
-//        }
-//    }
-    //*************************************Application_Update**********************************************************************
-//    @SuppressLint("StaticFieldLeak")
-//    public class Application_Update extends AsyncTask<String, String, String> {
-//        String response="";
-//        Handler handler;
-//        GetSetValues getSetValues;
-//
-//        public Application_Update(Handler handler, GetSetValues getSetValues) {
-//            this.handler = handler;
-//            this.getSetValues = getSetValues;
-//        }
-//
-//        @Override
-//        protected String doInBackground(String... params) {
-//            try {
-//                response = urlGetConnection(BASE_URL+"AndroidVersion");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            return response;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String result) {
-//            super.onPostExecute(result);
-//            receivingData.getApplication_Status(result, handler, getSetValues);
 //        }
 //    }
 }

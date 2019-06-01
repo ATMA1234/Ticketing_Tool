@@ -2,8 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFCCBC">
+    android:orientation="vertical">
 
     <include
         android:id="@+id/toolbar"
@@ -195,7 +194,9 @@
                     android:id="@+id/spinner_priority"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"></Spinner>
+                    android:layout_weight="1">
+
+                </Spinner>
             </LinearLayout>
 
             <LinearLayout
@@ -282,6 +283,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Title"
+                android:textColor="@color/black"
                 android:textSize="15sp"
                 android:textStyle="bold"/>
 
@@ -303,6 +305,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Description"
+                android:textColor="@color/black"
                 android:textSize="15sp"
                 android:textStyle="bold"/>
 
@@ -326,6 +329,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Narration"
+                android:textColor="@color/black"
                 android:textSize="15sp"
                 android:textStyle="bold"/>
 
@@ -350,6 +354,7 @@
                 android:gravity="center"
                 android:text="Comment"
                 android:textSize="15sp"
+                android:textColor="@color/black"
                 android:textStyle="bold"/>
 
             <EditText
@@ -372,6 +377,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Browse File"
+                android:textColor="@color/black"
                 android:background="@drawable/borders"
                 android:textAllCaps="false"/>
 
@@ -386,11 +392,9 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="40dp"
                 android:layout_width="150dp"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:textColor="@color/black"
-                android:background="@drawable/buttonpressed"
-                android:backgroundTint="#84C9FD"
+                android:textColor="#f8f8ff"
                 android:text="UPDATE"/>
 
         </LinearLayout>

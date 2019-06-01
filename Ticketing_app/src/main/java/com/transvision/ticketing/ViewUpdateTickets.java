@@ -1,5 +1,6 @@
 package com.transvision.ticketing;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public class ViewUpdateTickets extends AppCompatActivity {
     ArrayList<GetSetValues> arrayList;
     TicketUpdate_Adapter tickets_adapter;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +40,7 @@ public class ViewUpdateTickets extends AppCompatActivity {
         Toolbar toolbar =  findViewById(R.id.toolbar);
         TextView font_toolbar_title = toolbar.findViewById(R.id.toolbar_title);
         font_toolbar_title.setText("Ticketing Tool");
-        ImageView back_icon = (ImageView) findViewById(R.id.toolbar_icon);
+        ImageView back_icon = findViewById(R.id.toolbar_icon);
         back_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

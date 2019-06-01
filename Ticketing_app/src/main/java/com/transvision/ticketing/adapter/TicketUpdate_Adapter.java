@@ -13,9 +13,11 @@ import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.transvision.ticketing.R;
 import com.transvision.ticketing.ViewUpdateDeatils;
 import com.transvision.ticketing.extra.GetSetValues;
+
 import java.util.ArrayList;
 
 public class TicketUpdate_Adapter extends RecyclerView.Adapter<TicketUpdate_Adapter.TicketHolder> implements Filterable {
@@ -48,10 +50,9 @@ public class TicketUpdate_Adapter extends RecyclerView.Adapter<TicketUpdate_Adap
         holder.tv_tic_close.setText(getSetValues.getUp_tic_close());
         holder.tv_tic_status.setText(getSetValues.getUp_tic_status());
 
-        if(!TextUtils.isEmpty(getSetValues.getUp_tic_comment())) {
+        if (!TextUtils.isEmpty(getSetValues.getUp_tic_comment())) {
             holder.tv_tic_comm.setText(getSetValues.getUp_tic_comment()); //comment
-        }
-        else holder.lin_comment.setVisibility(View.INVISIBLE);
+        } else holder.lin_comment.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -70,19 +71,19 @@ public class TicketUpdate_Adapter extends RecyclerView.Adapter<TicketUpdate_Adap
         LinearLayout tic_close_layout;
         LinearLayout lin_comment;
 
-        public TicketHolder(View itemView) {
+        private TicketHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            lin_comment =  itemView.findViewById(R.id.comment);
+            lin_comment = itemView.findViewById(R.id.comment);
             tic_close_layout = itemView.findViewById(R.id.tic_close_layout);
             tv_tic_no = itemView.findViewById(R.id.tic_no);
-            tv_tic_narr =  itemView.findViewById(R.id.tic_narr);
-            tv_tic_file =  itemView.findViewById(R.id.tic_file);
-            tv_tic_gen_by =  itemView.findViewById(R.id.tic_gen_by);
-            tv_tic_gen_on =  itemView.findViewById(R.id.tic_gen_on);
-            tv_tic_status =  itemView.findViewById(R.id.tic_status);
-            tv_tic_close =  itemView.findViewById(R.id.tic_close);
-            tv_tic_comm =  itemView.findViewById(R.id.txt_tic_comm);
+            tv_tic_narr = itemView.findViewById(R.id.tic_narr);
+            tv_tic_file = itemView.findViewById(R.id.tic_file);
+            tv_tic_gen_by = itemView.findViewById(R.id.tic_gen_by);
+            tv_tic_gen_on = itemView.findViewById(R.id.tic_gen_on);
+            tv_tic_status = itemView.findViewById(R.id.tic_status);
+            tv_tic_close = itemView.findViewById(R.id.tic_close);
+            tv_tic_comm = itemView.findViewById(R.id.txt_tic_comm);
             tic_close_layout.setVisibility(View.GONE);
         }
 

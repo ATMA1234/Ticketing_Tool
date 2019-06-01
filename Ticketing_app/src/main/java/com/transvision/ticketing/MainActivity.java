@@ -2,12 +2,14 @@ package com.transvision.ticketing;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,11 +25,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.transvision.ticketing.extra.GetSetValues;
 import com.transvision.ticketing.fragment.AdminTicketing;
 import com.transvision.ticketing.posting.SendingData;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
+
 import static com.transvision.ticketing.extra.Constants.GETSET;
 import static com.transvision.ticketing.extra.Constants.TICKETS_VIEWFAILURE;
 import static com.transvision.ticketing.extra.Constants.TICKETS_VIEWSUCCESS;
@@ -37,12 +43,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     GetSetValues getSetValues;
     private Toolbar toolbar;
     Intent intent;
-    private ArrayList<String> main_tabs_list;
+    ArrayList<String> main_tabs_list;
     SendingData sendingData;
     String user_role = "", user_id = "", user_password = "", subdiv_code = "";
     ArrayList<GetSetValues> tickets_list;
 
-    //******************************************* Handler ***************************************************
+    //******************************************* Handler *************************************************************************
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 case TICKETS_VIEWSUCCESS:
                     Intent intent = new Intent(MainActivity.this, ViewallTickets.class);
                     intent.putExtra("list", tickets_list);
-                    intent.putExtra(GETSET, getSetValues);
+                    intent.putExtra(GETSET, getSetValues);// passing whole object
                     startActivity(intent);
                     break;
 
@@ -62,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     });
 
-    //******************************************************************************************************
+    //*********************************************************************************************************************************
     public enum Steps {
         FORM0(AdminTicketing.class);
 
@@ -77,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    //*********************************************************************************************************************************
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         intent = getIntent();
         getSetValues = new GetSetValues();
-        sendingData = new SendingData();
+        sendingData = new SendingData(this);
         tickets_list = new ArrayList<>();
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -96,18 +103,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView =  findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
-        TextView mrcode =  header.findViewById(R.id.textView);
+        TextView mrcode = header.findViewById(R.id.textView);
         mrcode.setText("Ticketing Tool");
 
-        //*****************************set app version to drawer**************************************************************
+        //*****************************set app version to drawer******************************************************************************
         PackageInfo pInfo = null;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -119,15 +125,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             main_curr_version = pInfo.versionName;
         }
 
-        NavigationView logout_navigationView =  findViewById(R.id.nav_drawer_bottom);
+        NavigationView logout_navigationView = findViewById(R.id.nav_drawer_bottom);
         logout_navigationView.setNavigationItemSelectedListener(this);
         logout_navigationView.setItemTextColor(ColorStateList.valueOf(Color.parseColor("#FF4081")));
         Menu menu = logout_navigationView.getMenu();
         MenuItem nav_login = menu.findItem(R.id.nav_version);
         nav_login.setTitle("Version" + " : " + main_curr_version);
 
-//****************************************************************************************************************
-        user_id = intent.getExtras().getString("UserId");
+//*******************************************************************************************************************************************
+        user_id = Objects.requireNonNull(intent.getExtras()).getString("UserId");
         user_password = intent.getExtras().getString("UserPassword");
         user_role = intent.getExtras().getString("ROLE");
 
@@ -135,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSetValues.setPassword(user_password);
         getSetValues.setUser_role(user_role);
 
-        if (intent.getExtras().getString("ROLE").equals("MR")) {
+        if (Objects.equals(intent.getExtras().getString("ROLE"), "MR")) {
             user_role = "MR";
             subdiv_code = user_id.substring(0, 6);
         } else {
@@ -153,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return this.getSetValues;
     }
 
-    //**************************************************************************************************************************
+    //******************************************************************************************************************************************
     public void switchContent(Steps currentForm, String title) {
         try {
             fragment = (Fragment) currentForm.getFragClass().newInstance();
@@ -167,20 +173,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ft.commit();
     }
 
-    public Fragment getFragment(Steps currentForm) {
-        try {
-            fragment = (Fragment) currentForm.getFragClass().newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return fragment;
-    }
+//    public Fragment getFragment(Steps currentForm) {
+//        try {
+//            fragment = (Fragment) currentForm.getFragClass().newInstance();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return fragment;
+//    }
 
     public Intent getintent() {
         return this.intent;
     }
 
-    //**************************************************************************************************************************
+    //******************************************************************************************************************************************
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -191,10 +197,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    //**************************************************************************************************************************
+    //******************************************************************************************************************************************
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         Fragment fragment = null;
         if (id == R.id.generate) {
@@ -210,10 +216,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SendingData.View_All_Tickets viewAllTickets = sendingData.new View_All_Tickets(getSetValues, handler, tickets_list);
             viewAllTickets.execute(user_id, user_password, user_role);
 
+        } else if (id == R.id.setting) {
+//            Intent intent = new Intent(MainActivity.this, Settings.class);
+//            startActivity(intent);
+
         } else if (id == R.id.nav_logout) {
             Intent logout = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(logout);
+            SharedPreferences sharedPreferences = getSharedPreferences("MY_SHARED_PREF", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
             finish();
+
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
